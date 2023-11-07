@@ -7,6 +7,7 @@ export type TCategory = {
     id: string;
     title: string;
     content: string;
+    image: string;
     imageUrl?: string;
     publicId?: string;
     catName?: string;

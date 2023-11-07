@@ -37,6 +37,7 @@ export default async function Home() {
             category={post.catName}
             title={post.title}
             content={post.content}
+            images={post.image}
             links={post.links || []}
           />
         ))

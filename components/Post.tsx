@@ -4,9 +4,12 @@ import { RiLinksFill } from "react-icons/ri";
 import { BiSolidMessageSquareEdit } from "react-icons/bi";
 import DeleteButton from "./DeleteButton";
 import { Button } from "@nextui-org/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 interface PostProps {
   id: string;
   author: string;
+  images: string;
   date: string;
   thumbnail?: string;
   authorEmail?: string;
@@ -15,7 +18,7 @@ interface PostProps {
   links?: string[];
   category?: string;
 }
-export default function Post({
+export default async function Post({
   id,
   author,
   date,
@@ -26,14 +29,30 @@ export default function Post({
   links,
   category,
 }: PostProps) {
-  const isEditable = true;
+  const session = await getServerSession(authOptions);
+  const dateObj= new Date(date);
+  const options: Intl.DateTimeFormatOptions = {
+    month: 'short',
+    day: 'numeric',
+    year:'numeric'
+  }
+  const formattedDate = dateObj.toLocaleDateString("en-US", options)
+  const isEditable = session && session?.user?.email=== authorEmail;
+  const userImage = session && session?.user?.email=== authorEmail;
   return (
     <div className="container mx-auto">
       <div className="flex flex-col px-4 py-4 bg-slate-800 rounded-lg my-5 shadow-xl">
         <div className="flex justify-between items-center">
+        
+          <div className="flex items-center gap-4">
+         {userImage ?  <Image className="w-10 h-10 rounded-full" src={session?.user?.image || ''} width={60} height={60} alt="image"/> : <>
+         
+         </>}
           <div>
-            <h3 className="font-semibold text-xl">{author}</h3>
-            <p className="text-sm text-slate-400">{date}</p>
+          <h3 className="font-semibold text-xl">{author}</h3>
+            <p className="text-sm text-slate-400">{formattedDate}</p>
+          </div>
+       
           </div>
           <p className=" font-medium bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 px-2 py-1 rounded-lg">
             {category && (
